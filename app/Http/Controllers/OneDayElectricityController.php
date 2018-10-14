@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Panel;
+use Illuminate\Support\Facades\DB;
 
 class OneDayElectricityController extends Controller
 {
@@ -18,11 +19,11 @@ class OneDayElectricityController extends Controller
         $panel = Panel::where('serial', $request->panel_serial)->first();
 
         return [[
-            'day' => null,
-            'sum' => 0,
-            'min' => 0,
-            'max' => 0,
-            'average' => 0
+            'day'     => DB::table('one_hour_electricities')->where('hour' , '<', DB::raw('curdate()'))->where('panel_id',$panel->id)->max('hour'),
+            'sum'     => DB::table('one_hour_electricities')->where('hour' , '<', DB::raw('curdate()'))->where('panel_id',$panel->id)->sum('kilowatts'),
+            'min'     => DB::table('one_hour_electricities')->where('hour' , '<', DB::raw('curdate()'))->where('panel_id',$panel->id)->min('kilowatts'),
+            'max'     => DB::table('one_hour_electricities')->where('hour' , '<', DB::raw('curdate()'))->where('panel_id',$panel->id)->max('kilowatts'),
+            'average' => DB::table('one_hour_electricities')->where('hour' , '<', DB::raw('curdate()'))->where('panel_id',$panel->id)->avg('kilowatts')
         ]];
     }
 }
