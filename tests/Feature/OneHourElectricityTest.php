@@ -16,7 +16,7 @@ class OneHourElectricityTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A basic test example.
+     * Test scenario: Valid Panel serial with Electricity
      *
      * @return void
      */
@@ -34,7 +34,7 @@ class OneHourElectricityTest extends TestCase
     }
 
     /**
-     * A basic test example.
+     * Test scenario: Valid Panel serial without Electricity
      *
      * @return void
      */
@@ -51,7 +51,7 @@ class OneHourElectricityTest extends TestCase
     }
 
     /**
-     * A basic test example.
+     * Test scenario: Invalid Panel serial
      *
      * @return void
      */
@@ -63,7 +63,7 @@ class OneHourElectricityTest extends TestCase
     }
 
     /**
-     * A basic test example.
+     * Test scenario: Without passing the Panel serial
      *
      * @return void
      */
@@ -72,5 +72,28 @@ class OneHourElectricityTest extends TestCase
         $response = $this->json('GET', '/api/one_hour_electricities');
 
         $response->assertStatus(404);
+    }
+
+
+    /**
+     * A basic test example.
+     *
+     * @return void
+     */
+    public function testSummaryForPanelWithElectricity()
+    {
+        $panel = factory(Panel::class)->make();
+        $panel->save();
+        factory(OneHourElectricity::class)->make([ 'panel_id' => $panel->id ])->save();
+        factory(OneHourElectricity::class)->make([ 'panel_id' => $panel->id ])->save();
+        factory(OneHourElectricity::class)->make([ 'panel_id' => $panel->id ])->save();
+        factory(OneHourElectricity::class)->make([ 'panel_id' => $panel->id ])->save();
+        factory(OneHourElectricity::class)->make([ 'panel_id' => $panel->id ])->save();
+
+        $response = $this->json('GET', '/api/one_day_electricities?panel_serial='.$panel->serial);
+
+        $response->assertStatus(200);
+
+        $this->assertCount(1, json_decode($response->getContent()));
     }
 }

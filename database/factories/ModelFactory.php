@@ -18,7 +18,7 @@ use App\Models\Panel;
 
 $factory->define(Panel::class, function (Faker $faker) {
     return [
-        'serial' => str_random(15),
+        'serial' => str_random(16),
         'longitude' => $faker->longitude,
         'latitude' => $faker->latitude
     ];
